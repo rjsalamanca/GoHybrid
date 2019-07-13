@@ -9,7 +9,7 @@ function App() {
   return (
     <Router>
       <Route path='/' exact component={HomePage} />
-      <Route path='/users' component={UsersPage} />
+      <Route path='/users/:login_or_register?' component={UsersPage} />
     </Router>
   );
 }
