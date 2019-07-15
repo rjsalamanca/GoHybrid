@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 
 class HomePage extends Component {
+    // state = {
+    //     isLoggedIn: Boolean
+    // }
 
     // async componentDidMount() {
-    //     const posts = await this.loadData();
-    //     this.setState({
-    //         posts: posts
+    //     await this.setState({
+    //         isLoggedIn: this.props.isLoggedIn
     //     })
     // }
 
@@ -17,9 +19,12 @@ class HomePage extends Component {
     // }
 
     render() {
+        const { isLoggedIn } = this.props;
+        // const { isLoggedIn } = this.state;
+
         return (
             <div>
-                <h1>Logged In Status: </h1>
+                <h1>Logged In Status: {isLoggedIn.toString()}</h1>
             </div>
         )
     }

@@ -11,6 +11,9 @@ class App extends Component {
   state = {
     isLoggedIn: false
   }
+
+  changeLoginState = (login) => { this.setState({ isLoggedIn: login }) }
+
   render() {
     const { isLoggedIn } = this.state
     return (
@@ -59,8 +62,8 @@ class App extends Component {
             }
           </div>
         </Nav>
-        <Route path='/' exact component={HomePage} />
-        <Route path='/users/:login_or_register?' component={UsersPage} />
+        <Route path='/' exact render={(props) => <HomePage {...props} isLoggedIn={isLoggedIn} />} />
+        <Route path='/users/:login_or_register?' render={(props) => <UsersPage {...props} isLoggedIn={isLoggedIn} changeLoginState={this.changeLoginState} />} />
       </Router >
     );
   }

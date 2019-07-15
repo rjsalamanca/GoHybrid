@@ -16,6 +16,28 @@ class Login extends Component {
     handleEmail = (e) => { this.setState({ email: e.target.value }) }
     handlePassword = (e) => { this.setState({ password: e.target.value }) }
 
+    // async componentDidMount() {
+    //     await this.setState({
+    //         isLoggedIn: this.props.isLoggedIn
+    //     })
+    // }
+
+    login = async () => {
+        const url = 'http://localhost:3000/users/login';
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.state)
+        })
+
+        const data = await response.json();
+        return data;
+    }
+
     render() {
         return (
             <Card variant={'dark'} style={loginCard}>
@@ -30,7 +52,7 @@ class Login extends Component {
                             <Form.Label>Password</Form.Label>
                             <Form.Control autoComplete="on" type="password" onChange={(e) => this.handlePassword(e)} placeholder="Password" />
                         </Form.Group>
-                        <Button variant="primary">
+                        <Button variant="primary" onClick={(e) => this.login()}>
                             Sign In
                         </Button>
                     </Form>
