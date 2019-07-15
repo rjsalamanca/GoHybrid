@@ -9,10 +9,10 @@ class Users {
         this.password = password;
     }
 
-    static async searchUser(email) {
+    static async checkUser(email) {
         try {
             const response = db.one(`
-                SELECT id, password, email, f_name 
+                SELECT id 
                 FROM users 
                 WHERE email = $1
             `, [email]);

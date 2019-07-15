@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www"
+    "dev": "nodemon ./bin/www",
+    "db:reset": "psql gohybrid -f ./sql/schema.sql -U rjs && psql gohybrid -f ./sql/seed.sql -U rjs"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
