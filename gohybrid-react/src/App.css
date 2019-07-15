@@ -6,3 +6,20 @@
 .users-alert {
   margin-top: 25px;
 }
+
+#carLookUpContainer {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+#sideBar {
+  border: 1px solid red;
+  width: 20%;
+}
+
+#mainContainer {
+  width: 80%;
+  border: 1px solid blue;
+}
