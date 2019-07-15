@@ -8,15 +8,16 @@ const express = require("express"),
 router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
   const checkEmail = await UsersModel.checkUser(email);
-  const hashPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
   //Error Codes for login:
   //1: Not found
   //2: Wrong Password or Username
 
   if (checkEmail.rowCount === 1) {
     let user = checkEmail.rows[0];
+    const comparePassword = await bcrypt.compare(password, user.password);
 
-    if (user.password === hashPassword) {
+    if (!!comparePassword) {
       user["login"] = true;
       delete user.password;
       res.json(user);
@@ -42,8 +43,9 @@ router.post("/register", async (req, res, next) => {
   const checkEmail = await UsersModel.checkUser(email);
 
   //Error Codes for Register:
-  //1: User already created
-  //2: Database write error
+  //3: User already created
+  //4: Database write error
+  //5: Success
 
   if (checkEmail.rowCount === 0) {
     const hashPassword = await bcrypt.hash(password, SALT_ROUNDS);
@@ -52,17 +54,15 @@ router.post("/register", async (req, res, next) => {
     (createUser.rowCount === 1) ?
       res.json({
         createdAccount: true,
-        errorCode: 0
+        errorCode: 5
       })
       :
       res.json({
-        createdAccount: false,
-        errorCode: 2
+        errorCode: 4
       });
   } else {
     res.json({
-      createdAccount: false,
-      errorCode: 1
+      errorCode: 3
     });
   }
 });

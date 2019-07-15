@@ -10,6 +10,12 @@ class Login extends Component {
         errorCode: 0
     }
 
+    componentDidMount = () => {
+        if (this.props.location.errorCode !== undefined) {
+            this.setState({ errorCode: this.props.location.errorCode })
+        }
+    }
+
     handleEmail = (e) => { this.setState({ email: e.target.value }) }
     handlePassword = (e) => { this.setState({ password: e.target.value }) }
 
@@ -65,20 +71,24 @@ class Login extends Component {
                     </Form>
                     {errorCode === 1 ?
                         <Alert className="alert alert-dismissible alert-danger users-alert">
-                            <strong>Sorry, we couldn"t find you.</strong> Try typing in your username and password again.
+                            <strong>Sorry, we couldn't find you.</strong> Try typing in your username and password again.
                         </Alert>
                         :
                         errorCode === 2
                             ?
                             <Alert className="alert alert-dismissible alert-danger users-alert">
-                                <strong>You"ve enntered in the wrong password.</strong> Please try typing in your password again.
+                                <strong>You've entered in the wrong password.</strong> Please try typing in your password again.
                             </Alert>
                             : errorCode === 3
                                 ?
                                 <Alert className="alert alert-dismissible alert-danger users-alert">
-                                    <strong>Uh Oh, we are currently having issues.</strong> Please send let us know you have the following <b>Error Code: 3</b>
+                                    <strong>Uh Oh, we are currently having issues.</strong> Please send let us know you have the following <b>Error Code: {errorCode}</b>
                                 </Alert>
-                                : ``}
+                                : errorCode === 5
+                                    ?
+                                    <Alert variant={'success'} className="users-alert">
+                                        <strong>You've successfully created a new account!</strong> Please login with your newly created credentials.
+                                    </Alert> : ''}
                     <p className="mt-4">
                         No Account? <Link to="/users/register">Register</Link>
                     </p>

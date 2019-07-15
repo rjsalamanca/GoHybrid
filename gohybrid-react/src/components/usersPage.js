@@ -28,7 +28,7 @@ class UsersPage extends Component {
 
         return (
             (login_or_register === "login") ?
-                <Login changeLoginState={changeLoginState} />
+                <Login {...this.props} changeLoginState={changeLoginState} />
                 :
                 (login_or_register === "register") ?
                     <Register />
