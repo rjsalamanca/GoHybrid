@@ -25,7 +25,7 @@ class UsersPage extends Component {
     render() {
         const { login_or_register } = this.props.match.params;
         const { changeLoginState } = this.props;
-        console.log(this.props.user)
+
         return (
             (login_or_register === "login") ?
                 <Login changeLoginState={changeLoginState} />
