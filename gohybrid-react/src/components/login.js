@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { Card, Button, Form } from 'react-bootstrap';
+import { Link, Redirect } from 'react-router-dom';
+import { Card, Button, Form, Alert } from 'react-bootstrap';
 
 const loginCard = {
     width: '500px',
@@ -10,35 +10,40 @@ const loginCard = {
 class Login extends Component {
     state = {
         email: "",
-        password: ""
+        password: "",
+        login: false,
+        errorCode: 0
     }
 
     handleEmail = (e) => { this.setState({ email: e.target.value }) }
     handlePassword = (e) => { this.setState({ password: e.target.value }) }
 
-    // async componentDidMount() {
-    //     await this.setState({
-    //         isLoggedIn: this.props.isLoggedIn
-    //     })
-    // }
-
     login = async () => {
         const url = 'http://localhost:3000/users/login';
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.state)
+            })
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.state)
-        })
+            const { login, errorCode } = await response.json();
 
-        const data = await response.json();
-        return data;
+            this.setState({
+                login,
+                errorCode
+            })
+
+        } catch (err) {
+            this.setState({ errorCode: 3 })
+        }
     }
 
     render() {
+        const { errorCode } = this.state
         return (
             <Card variant={'dark'} style={loginCard}>
                 <Card.Header as="h5">Login</Card.Header>
@@ -56,6 +61,22 @@ class Login extends Component {
                             Sign In
                         </Button>
                     </Form>
+                    {errorCode === 1 ?
+                        <Alert className="alert alert-dismissible alert-danger users-alert">
+                            <strong>Sorry, we couldn't find you.</strong> Try typing in your username and password again.
+                        </Alert>
+                        :
+                        errorCode === 2
+                            ?
+                            <Alert className="alert alert-dismissible alert-danger users-alert">
+                                <strong>You've enntered in the wrong password.</strong> Please try typing in your password again.
+                            </Alert>
+                            : errorCode === 3
+                                ?
+                                <Alert className="alert alert-dismissible alert-danger users-alert">
+                                    <strong>Uh Oh, we are currently having issues.</strong> Please send let us know you have the following <b>Error Code: 3</b>
+                                </Alert>
+                                : ``}
                     <p className="mt-4">
                         No Account? <Link to="/users/register">Register</Link>
                     </p>
