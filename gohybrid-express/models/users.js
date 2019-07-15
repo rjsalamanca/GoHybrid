@@ -22,11 +22,15 @@ class Users {
         }
     }
 
-    static async addUser(f_name, l_name, email, hashPW) {
+    async addUser(hashPW) {
         try {
-            await db.none(`
-                INSERT INTO users(f_name, l_name, email, password)
-                VALUES($1,$2,$3,$4)`, [f_name, l_name, email, hashPW]);
+            const response = await db.result(`
+                INSERT INTO users
+                    (first_name, last_name, email, password)
+                VALUES
+                    ($1,$2,$3,$4)`,
+                [this.first_name, this.last_name, this.email, hashPW]);
+            return response;
         } catch (err) {
             return err.message;
         }

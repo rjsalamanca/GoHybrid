@@ -8,6 +8,7 @@
     "db:reset": "psql gohybrid -f ./sql/schema.sql -U rjs && psql gohybrid -f ./sql/seed.sql -U rjs"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "debug": "~2.6.9",

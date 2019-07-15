@@ -17,38 +17,34 @@ class Register extends Component {
 
     render() {
         return (
-            <Card className="usersCard" variant={"dark"}>
-                <Card.Header as="h5">Register</Card.Header>
+            <Card className="usersCard" >
+                <Card.Header> Register</Card.Header>
                 <Card.Body>
                     <Form>
-                        <Form.Group controlId="formBasicEmail">
-                            <Form.Label>First Name: </Form.Label>
-                            <Form.Control type="input" onChange={(e) => this.handleFirstName(e)} placeholder="Enter Your First Name" />
 
-                            <Form.Label>Last Name: </Form.Label>
-                            <Form.Control type="input" onChange={(e) => this.handleLastName(e)} placeholder="Enter Your Last Name" />
-
-                            <Form.Label>Email address</Form.Label>
-                            <Form.Control type="email" onChange={(e) => this.handleEmail(e)} placeholder="Enter email" />
-
-                            <Form.Text className="text-muted">
-                                We'll never share your email with anyone else.
-                            </Form.Text>
+                        <Form.Group controlId="formFirstName">
+                            <Form.Label for="exampleTextArea">First Name</Form.Label>
+                            <Form.Control type="text" name="f_name" className="form-control" id="exampleTextArea" placeholder="First Name" onChange={() => this.handleFirstName} />
                         </Form.Group>
-                        <Form.Group controlId="formBasicPassword">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control autoComplete="on" type="password" onChange={(e) => this.handlePassword(e)} placeholder="Password" />
+                        <Form.Group controlId="formLastName">
+                            <Form.Label for="exampleTextArea">Last Name</Form.Label>
+                            <Form.Control type="text" name="l_name" className="form-control" id="exampleTextArea" placeholder="Last Name" onChange={() => this.handleLastName} />
                         </Form.Group>
-                        <Button variant="primary">
-                            Submit
-                        </Button>
+                        <Form.Group controlId="formEmail">
+                            <Form.Label for="exampleInputEmail1">Email address</Form.Label>
+                            <Form.Control type="email" name="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" onChange={() => this.handleEmail} />
+                            <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
+                        </Form.Group>
+                        <Form.Group controlId="formPassword">
+                            <Form.Label for="exampleInputPassword1">Password</Form.Label>
+                            <Form.Control type="password" name="password" className="form-control" id="exampleInputPassword1" placeholder="Password" onChange={() => this.handlePassword} />
+                        </Form.Group>
+
+                        <Button className="btn btn-danger">Submit</Button>
                     </Form>
-                    <p className="mt-4">
-                        Already have an account? <Link to="/users/login">Login Here</Link>
-                    </p>
+                    <p className="lead mt-4">Already have an account? <Link to="/users/login">Login Here</Link></p>
                 </Card.Body>
-
-            </Card>
+            </Card >
         )
     }
 }

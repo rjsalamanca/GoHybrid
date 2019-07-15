@@ -1,21 +1,24 @@
-const express = require('express'),
+const express = require("express"),
   router = express.Router(),
-  UsersModel = require('../models/users');
+  bcrypt = require('bcryptjs'),
+  SALT_ROUNDS = 10,
+  UsersModel = require("../models/users");
 
 /* GET users listing. */
-router.post('/login', async (req, res, next) => {
+router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
   const checkEmail = await UsersModel.checkUser(email);
-
-  //Error Codes:
+  const hashPassword = await bcrypt.hash(password, SALT_ROUNDS);
+  //Error Codes for login:
   //1: Not found
   //2: Wrong Password or Username
 
   if (checkEmail.rowCount === 1) {
     let user = checkEmail.rows[0];
 
-    if (user.password === password) {
-      user['login'] = true;
+    if (user.password === hashPassword) {
+      user["login"] = true;
+      delete user.password;
       res.json(user);
     } else {
       res.json({
@@ -28,6 +31,37 @@ router.post('/login', async (req, res, next) => {
     res.json({
       // Not Found
       login: false,
+      errorCode: 1
+    });
+  }
+});
+
+router.post("/register", async (req, res, next) => {
+  const { first_name, last_name, email, password } = req.body;
+  const userInstance = new UsersModel(null, first_name, last_name, email, null);
+  const checkEmail = await UsersModel.checkUser(email);
+
+  //Error Codes for Register:
+  //1: User already created
+  //2: Database write error
+
+  if (checkEmail.rowCount === 0) {
+    const hashPassword = await bcrypt.hash(password, SALT_ROUNDS);
+    const createUser = await userInstance.addUser(hashPassword);
+
+    (createUser.rowCount === 1) ?
+      res.json({
+        createdAccount: true,
+        errorCode: 0
+      })
+      :
+      res.json({
+        createdAccount: false,
+        errorCode: 2
+      });
+  } else {
+    res.json({
+      createdAccount: false,
       errorCode: 1
     });
   }

@@ -2,11 +2,6 @@ import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { Card, Button, Form, Alert } from "react-bootstrap";
 
-const loginCard = {
-    width: "500px",
-    margin: "30px auto"
-}
-
 class Login extends Component {
     state = {
         email: "",
@@ -43,17 +38,16 @@ class Login extends Component {
                 login,
                 errorCode
             })
-
         } catch (err) {
             // This error code tells us that the url is bad.
-            this.setState({ errorCode: 3 })
+            this.setState({ errorCode: 3 });
         }
     }
 
     render() {
-        const { login, errorCode } = this.state
+        const { login, errorCode } = this.state;
         return (
-            <Card variant={"dark"} style={loginCard}>
+            <Card variant={"dark"} className="usersCard">
                 <Card.Header as="h5">Login</Card.Header>
                 <Card.Body>
                     <Form>
