@@ -11,8 +11,8 @@ class Users {
 
     static async checkUser(email) {
         try {
-            const response = db.one(`
-                SELECT id 
+            const response = db.result(`
+                SELECT *
                 FROM users 
                 WHERE email = $1
             `, [email]);
@@ -21,6 +21,7 @@ class Users {
             return err.message;
         }
     }
+
 
     static async addUser(f_name, l_name, email, hashPW) {
         try {

@@ -4,14 +4,6 @@ import Register from './register';
 
 class UsersPage extends Component {
 
-    register() {
-        return (
-            <div>
-                <h1>register</h1>
-            </div>
-        )
-    }
-
     render() {
         const { login_or_register } = this.props.match.params;
         return (
