@@ -9,10 +9,23 @@ import './App.css';
 
 class App extends Component {
   state = {
-    isLoggedIn: false
+    isLoggedIn: false,
+    id: 0,
+    first_name: '',
+    last_name: '',
+    email: ''
   }
 
-  changeLoginState = (login) => { this.setState({ isLoggedIn: login }) }
+  changeLoginState = (user) => {
+    const { login, id, first_name, last_name, email } = user;
+    this.setState({
+      isLoggedIn: login,
+      id,
+      first_name,
+      last_name,
+      email
+    })
+  }
 
   render() {
     const { isLoggedIn } = this.state
@@ -62,8 +75,8 @@ class App extends Component {
             }
           </div>
         </Nav>
-        <Route path='/' exact render={(props) => <HomePage {...props} isLoggedIn={isLoggedIn} />} />
-        <Route path='/users/:login_or_register?' render={(props) => <UsersPage {...props} isLoggedIn={isLoggedIn} changeLoginState={this.changeLoginState} />} />
+        <Route path='/' exact render={(props) => <HomePage {...props} user={this.state} />} />
+        <Route path='/users/:login_or_register?' render={(props) => <UsersPage {...props} user={this.state} changeLoginState={this.changeLoginState} />} />
       </Router >
     );
   }

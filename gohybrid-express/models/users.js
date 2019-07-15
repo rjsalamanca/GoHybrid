@@ -22,7 +22,6 @@ class Users {
         }
     }
 
-
     static async addUser(f_name, l_name, email, hashPW) {
         try {
             await db.none(`

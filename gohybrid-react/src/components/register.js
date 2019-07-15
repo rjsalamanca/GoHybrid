@@ -47,6 +47,7 @@ class Register extends Component {
                         Already have an account? <Link to="/users/login">Login Here</Link>
                     </p>
                 </Card.Body>
+
             </Card>
         )
     }

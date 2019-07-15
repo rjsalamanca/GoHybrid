@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import { Card, Button, Form, Alert } from 'react-bootstrap';
+import React, { Component } from "react";
+import { Link, Redirect } from "react-router-dom";
+import { Card, Button, Form, Alert } from "react-bootstrap";
 
 const loginCard = {
-    width: '500px',
-    margin: '30px auto'
+    width: "500px",
+    margin: "30px auto"
 }
 
 class Login extends Component {
@@ -19,18 +19,25 @@ class Login extends Component {
     handlePassword = (e) => { this.setState({ password: e.target.value }) }
 
     login = async () => {
-        const url = 'http://localhost:3000/users/login';
+        const url = "http://localhost:3000/users/login";
+
         try {
             const response = await fetch(url, {
-                method: 'POST',
+                method: "POST",
                 headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify(this.state)
             })
 
-            const { login, errorCode } = await response.json();
+            const data = await response.json();
+            const { login, errorCode } = data;
+
+            if (!!login) {
+                const { id, first_name, last_name, email } = data;
+                this.props.changeLoginState({ login, id, first_name, last_name, email })
+            }
 
             this.setState({
                 login,
@@ -38,14 +45,15 @@ class Login extends Component {
             })
 
         } catch (err) {
+            // This error code tells us that the url is bad.
             this.setState({ errorCode: 3 })
         }
     }
 
     render() {
-        const { errorCode } = this.state
+        const { login, errorCode } = this.state
         return (
-            <Card variant={'dark'} style={loginCard}>
+            <Card variant={"dark"} style={loginCard}>
                 <Card.Header as="h5">Login</Card.Header>
                 <Card.Body>
                     <Form>
@@ -63,13 +71,13 @@ class Login extends Component {
                     </Form>
                     {errorCode === 1 ?
                         <Alert className="alert alert-dismissible alert-danger users-alert">
-                            <strong>Sorry, we couldn't find you.</strong> Try typing in your username and password again.
+                            <strong>Sorry, we couldn"t find you.</strong> Try typing in your username and password again.
                         </Alert>
                         :
                         errorCode === 2
                             ?
                             <Alert className="alert alert-dismissible alert-danger users-alert">
-                                <strong>You've enntered in the wrong password.</strong> Please try typing in your password again.
+                                <strong>You"ve enntered in the wrong password.</strong> Please try typing in your password again.
                             </Alert>
                             : errorCode === 3
                                 ?
@@ -81,6 +89,7 @@ class Login extends Component {
                         No Account? <Link to="/users/register">Register</Link>
                     </p>
                 </Card.Body>
+                {(!!login) ? <Redirect to="/" /> : ""}
             </Card>
         )
     }
