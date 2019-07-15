@@ -6,6 +6,12 @@ import Register from "./register";
 
 class UsersPage extends Component {
 
+    componentDidMount = () => {
+        if (this.props.match.params.login_or_register === "logout") {
+            this.loggedInToLogout();
+        }
+    }
+
     loggedInToLogout = () => {
         //Reset user state
         this.props.changeLoginState({
@@ -18,6 +24,7 @@ class UsersPage extends Component {
 
         return <Redirect to="/" />
     }
+
     notLoggedInToLogout = () => {
         return <Redirect to="/users/login" />
     }
@@ -33,7 +40,7 @@ class UsersPage extends Component {
                 (login_or_register === "register") ?
                     <Register />
                     : (login_or_register === "logout") ?
-                        (!!this.props.user.isLoggedIn ? this.loggedInToLogout() : this.notLoggedInToLogout())
+                        (!!this.props.user.isLoggedIn ? '' : this.notLoggedInToLogout())
                         : <Redirect to="/" />
         )
     }
