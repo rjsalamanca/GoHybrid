@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Container, Form } from 'react-bootstrap';
+import { Container, Form, Card } from 'react-bootstrap';
+import noImageAvailable from '../placeholderCar.png'
 
 const convert = require('xml-js');
 
@@ -14,11 +15,22 @@ class HomePage extends Component {
         getModels: [],
         year: null,
         make: '',
-        model: ''
+        model: '',
+        showCurrentSelection: [],
+        showCars: false
     }
 
     componentDidMount = () => {
         this.loadYears();
+    }
+
+    componentDidUpdate = () => {
+        if (this.state.model === '' && this.state.showCars === false && this.state.getModels.length !== 0) {
+            this.setState({
+                showCurrentSelection: this.state.getModels,
+                showCars: true
+            })
+        }
     }
 
     loadYears = async () => {
@@ -50,6 +62,7 @@ class HomePage extends Component {
 
     loadModels = async () => {
         const url = `https://www.fueleconomy.gov/ws/rest/vehicle/menu/model?year=${this.state.year}&make=${this.state.make}`;
+
         try {
             const response = await fetch(url)
             const responseToText = await response.text();
@@ -80,7 +93,7 @@ class HomePage extends Component {
             const data = await response.json();
             return data.items[0].snippet.thumbnails.medium.url;
         } catch (err) {
-            console.log(err.message)
+            return err;
         }
     }
 
@@ -94,6 +107,10 @@ class HomePage extends Component {
             return data.query.pages[Object.keys(data.query.pages)].thumbnail.source;
         } catch (err) {
             const getImageFromYoutube = await this.getModelImages(carModel);
+
+            if (typeof getImageFromYoutube === 'object') {
+                return noImageAvailable
+            }
             return getImageFromYoutube;
         }
     }
@@ -119,8 +136,7 @@ class HomePage extends Component {
     }
 
     render() {
-        const { getYears, getMakes, getModels, make, model, year } = this.state;
-        console.log(getModels);
+        const { getYears, getMakes, getModels, make, model, year, showCurrentSelection } = this.state;
         return (
             <div>
                 <h1>Go Hybrid - Home Page</h1>
@@ -159,14 +175,20 @@ class HomePage extends Component {
                         </Form.Control>
                     </div>
                     <div id="mainContainer">
-                        <div>Whats up</div>
                         <div className="searchParameters">
                             <p>Year: {year}</p>
                             <p>Make: {make}</p>
                             <p>Model: {model}</p>
                         </div>
                         <div className="carModels">
-
+                            {showCurrentSelection.map((car, index) =>
+                                <Card key={car + index} style={{ width: '18rem' }}>
+                                    <Card.Img variant="top" src={car.img} alt={car.model} />
+                                    <Card.Body>
+                                        <Card.Title>{car.model}</Card.Title>
+                                    </Card.Body>
+                                </Card>
+                            )}
                         </div>
                     </div>
                 </Container>
@@ -174,5 +196,11 @@ class HomePage extends Component {
         )
     }
 }
+
+
+{/* <div key={car + index}>
+<img src={car.img} alt={car.model} />
+<b>{car.model}</b>
+</div> */}
 
 export default HomePage;
