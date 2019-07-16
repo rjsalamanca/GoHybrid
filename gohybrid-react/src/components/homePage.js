@@ -22,14 +22,6 @@ class HomePage extends Component {
         this.loadYears();
     }
 
-    // componentDidUpdate = () => {
-    //     const { year, make } = this.state;
-    //     if (year !== null) {
-    //         this.loadMakes();
-    //     }
-    //     //this.loadMakes();
-    // }
-
     loadYears = async () => {
         const url = "https://www.fueleconomy.gov/ws/rest/vehicle/menu/year";
 
@@ -63,8 +55,50 @@ class HomePage extends Component {
             const response = await fetch(url)
             const responseToText = await response.text();
             const dataAsJson = JSON.parse(convert.xml2json(responseToText, { compact: true, spaces: 4 })).menuItems.menuItem;
+
+            // Async not awaiting???
+            // const carModels = dataAsJson.map(async (model) => {
+            //     const getModelImage = await this.getModelImages(model.value._text);
+            //     console.log(getModelImage)
+            //     return model.value._text;
+            // });
+
             const carModels = dataAsJson.map(model => model.value._text);
-            this.setState({ getModels: carModels })
+            // const getImages = carModels.map(async model => {
+            //     const url = await this.getModelImages(model);
+            //     console.log('hi');
+            //     console.log(url);
+            //     return url;
+            // });
+
+            console.log(this.tryThis())
+
+            this.setState({ getModels: carModels });
+            // this.getModelImages();
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+
+    getModelImages = async (carModel) => {
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=${this.state.year + ' ' + this.state.make + ' ' + carModel}&key=AIzaSyB9WzlCfQKAWzLTqAsrcepelEEUT4b8NPk`;
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            return data.items[0].snippet.thumbnails.medium.url;
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+
+    tryThis = async () => {
+        let wikiURL = `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&origin=*&format=json&titles=Acura_MDX`;
+
+        const url = `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&titles=Acura_MDX&pithumbsize=250`;
+        try {
+            const response = await fetch(wikiURL);
+            const data = await response.json();
+            return await data;
         } catch (err) {
             console.log(err.message)
         }
@@ -120,20 +154,25 @@ class HomePage extends Component {
                         </Form.Control>
                         <Form.Control onChange={(e) => this.handleModel(e)} as="select">
                             <option>Model</option>
-                            {getModels.length !== 0 ?
+                            {/* {getModels.length !== 0 ?
                                 getModels.map(singleModel =>
                                     <option key={`${make}-${singleModel}`}>{singleModel}</option>
                                 )
                                 :
                                 <option disabled>Choose a Year First...</option>
-                            }
+                            } */}
                         </Form.Control>
                     </div>
                     <div id="mainContainer">
                         <div>Whats up</div>
-                        <p>Year: {year}</p>
-                        <p>Make: {make}</p>
-                        <p>Model: {model}</p>
+                        <div className="searchParameters">
+                            <p>Year: {year}</p>
+                            <p>Make: {make}</p>
+                            <p>Model: {model}</p>
+                        </div>
+                        <div className="carModels">
+
+                        </div>
                     </div>
                 </Container>
             </div >
