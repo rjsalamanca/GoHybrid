@@ -14,8 +14,7 @@ class HomePage extends Component {
         getModels: [],
         year: null,
         make: '',
-        model: '',
-        searchParameters: ''
+        model: ''
     }
 
     componentDidMount = () => {
@@ -54,27 +53,21 @@ class HomePage extends Component {
         try {
             const response = await fetch(url)
             const responseToText = await response.text();
-            const dataAsJson = JSON.parse(convert.xml2json(responseToText, { compact: true, spaces: 4 })).menuItems.menuItem;
+            let dataAsJson = JSON.parse(convert.xml2json(responseToText, { compact: true, spaces: 4 })).menuItems.menuItem;
 
-            // Async not awaiting???
-            // const carModels = dataAsJson.map(async (model) => {
-            //     const getModelImage = await this.getModelImages(model.value._text);
-            //     console.log(getModelImage)
-            //     return model.value._text;
-            // });
+            if (typeof dataAsJson === 'object') {
+                dataAsJson = Array.from(dataAsJson);
+            }
 
             const carModels = dataAsJson.map(model => model.value._text);
-            // const getImages = carModels.map(async model => {
-            //     const url = await this.getModelImages(model);
-            //     console.log('hi');
-            //     console.log(url);
-            //     return url;
-            // });
+            let carModelImages = await carModels.map(async model => await this.tryThis(model))
+            await Promise.all(carModelImages).then((cars) => carModelImages = cars);
 
-            console.log(this.tryThis())
+            const modelsAndImages = carModels.map((model, index) => {
+                return { model, img: carModelImages[index] }
+            })
 
-            this.setState({ getModels: carModels });
-            // this.getModelImages();
+            this.setState({ getModels: modelsAndImages });
         } catch (err) {
             console.log(err.message)
         }
@@ -91,16 +84,17 @@ class HomePage extends Component {
         }
     }
 
-    tryThis = async () => {
-        let wikiURL = `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&origin=*&format=json&titles=Acura_MDX`;
+    tryThis = async (carModel) => {
+        const searchMakeAndModel = (this.state.make + "_" + carModel).split(' ').join('_');
+        let wikiURL = `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&origin=%2A&titles=${searchMakeAndModel}&pithumbsize=250&format=json`;
 
-        const url = `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&titles=Acura_MDX&pithumbsize=250`;
         try {
             const response = await fetch(wikiURL);
             const data = await response.json();
-            return await data;
+            return data.query.pages[Object.keys(data.query.pages)].thumbnail.source;
         } catch (err) {
-            console.log(err.message)
+            const getImageFromYoutube = await this.getModelImages(carModel);
+            return getImageFromYoutube;
         }
     }
 
@@ -125,7 +119,8 @@ class HomePage extends Component {
     }
 
     render() {
-        const { getYears, getMakes, getModels, make, model, year } = this.state
+        const { getYears, getMakes, getModels, make, model, year } = this.state;
+        console.log(getModels);
         return (
             <div>
                 <h1>Go Hybrid - Home Page</h1>
@@ -154,13 +149,13 @@ class HomePage extends Component {
                         </Form.Control>
                         <Form.Control onChange={(e) => this.handleModel(e)} as="select">
                             <option>Model</option>
-                            {/* {getModels.length !== 0 ?
+                            {getModels.length !== 0 ?
                                 getModels.map(singleModel =>
-                                    <option key={`${make}-${singleModel}`}>{singleModel}</option>
+                                    <option key={`${make}-${singleModel.model}`}>{singleModel.model}</option>
                                 )
                                 :
                                 <option disabled>Choose a Year First...</option>
-                            } */}
+                            }
                         </Form.Control>
                     </div>
                     <div id="mainContainer">
