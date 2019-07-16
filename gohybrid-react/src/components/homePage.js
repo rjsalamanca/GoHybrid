@@ -30,6 +30,11 @@ class HomePage extends Component {
                 showCurrentSelection: this.state.getModels,
                 showCars: true
             })
+        } else if (this.state.model !== '' && this.state.showCars === false) {
+            this.setState({
+                showCurrentSelection: this.state.getModels,
+                showCars: true
+            })
         }
     }
 
@@ -73,20 +78,20 @@ class HomePage extends Component {
             }
 
             const carModels = dataAsJson.map(model => model.value._text);
-            let hybridCars = [];
+            let hybridCars = await carModels.map(async model =>
+                (await this.findHybrids(model) === true) ? model : false
+            );
 
-            carModels.forEach(car => {
-                this.findHybrids(car)
-            })
+            await Promise.all(hybridCars).then((response) => hybridCars = response.filter(e => e !== false));
 
-            let carModelImages = await carModels.map(async model => await this.tryThis(model))
+            let carModelImages = await hybridCars.map(async model => await this.tryThis(model))
             await Promise.all(carModelImages).then((cars) => carModelImages = cars);
 
-            const modelsAndImages = carModels.map((model, index) => {
+            const modelsAndImages = hybridCars.map((model, index) => {
                 return { model, img: carModelImages[index] }
             })
 
-            this.setState({ getModels: modelsAndImages });
+            this.setState({ getModels: modelsAndImages, showCars: false });
         } catch (err) {
             console.log(err.message)
         }
@@ -100,7 +105,7 @@ class HomePage extends Component {
             const responseToText = await response.text();
             let dataAsJson = JSON.parse(convert.xml2json(responseToText, { compact: true, spaces: 4 })).menuItems.menuItem;
             let carID = dataAsJson.value._text;
-            console.log(dataAsJson.value._text)
+            //console.log(dataAsJson.value._text)
             //    (typeof dataAsJson === 'array') ? carID = dataAsJson[0].value._text : carID = dataAsJson.value._text;
 
             const carDetailsURL = `https://www.fueleconomy.gov/ws/rest/vehicle/${carID}`;
@@ -108,9 +113,8 @@ class HomePage extends Component {
             try {
                 const responseDetails = await fetch(carDetailsURL);
                 const responseDetailsToText = await responseDetails.text();
-                let responseDetailsdataAsJson = JSON.parse(convert.xml2json(responseDetailsToText, { compact: true, spaces: 4 })).menuItems.menuItem;
-
-                console.log(responseDetailsdataAsJson)
+                let responseDetailsdataAsJson = JSON.parse(convert.xml2json(responseDetailsToText, { compact: true, spaces: 4 })).vehicle;
+                return (responseDetailsdataAsJson.atvType._text === 'Hybrid') ? true : false;
             } catch (err) {
                 return err.message;
             }
