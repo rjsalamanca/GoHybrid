@@ -73,6 +73,12 @@ class HomePage extends Component {
             }
 
             const carModels = dataAsJson.map(model => model.value._text);
+            let hybridCars = [];
+
+            carModels.forEach(car => {
+                this.findHybrids(car)
+            })
+
             let carModelImages = await carModels.map(async model => await this.tryThis(model))
             await Promise.all(carModelImages).then((cars) => carModelImages = cars);
 
@@ -83,6 +89,33 @@ class HomePage extends Component {
             this.setState({ getModels: modelsAndImages });
         } catch (err) {
             console.log(err.message)
+        }
+    }
+
+    findHybrids = async (carModel) => {
+        const url = `https://www.fueleconomy.gov/ws/rest/vehicle/menu/options?year=${this.state.year}&make=${this.state.make}&model=${carModel}`;
+
+        try {
+            const response = await fetch(url);
+            const responseToText = await response.text();
+            let dataAsJson = JSON.parse(convert.xml2json(responseToText, { compact: true, spaces: 4 })).menuItems.menuItem;
+            let carID = dataAsJson.value._text;
+            console.log(dataAsJson.value._text)
+            //    (typeof dataAsJson === 'array') ? carID = dataAsJson[0].value._text : carID = dataAsJson.value._text;
+
+            const carDetailsURL = `https://www.fueleconomy.gov/ws/rest/vehicle/${carID}`;
+
+            try {
+                const responseDetails = await fetch(carDetailsURL);
+                const responseDetailsToText = await responseDetails.text();
+                let responseDetailsdataAsJson = JSON.parse(convert.xml2json(responseDetailsToText, { compact: true, spaces: 4 })).menuItems.menuItem;
+
+                console.log(responseDetailsdataAsJson)
+            } catch (err) {
+                return err.message;
+            }
+        } catch (err) {
+            return err.message;
         }
     }
 
