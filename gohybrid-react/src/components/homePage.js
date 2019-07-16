@@ -182,7 +182,7 @@ class HomePage extends Component {
                         </div>
                         <div className="carModels">
                             {showCurrentSelection.map((car, index) =>
-                                <Card key={car + index} style={{ width: '18rem' }}>
+                                <Card className='carCard' key={car + index} style={{ width: '18rem' }}>
                                     <Card.Img variant="top" src={car.img} alt={car.model} />
                                     <Card.Body>
                                         <Card.Title>{car.model}</Card.Title>
@@ -196,11 +196,5 @@ class HomePage extends Component {
         )
     }
 }
-
-
-{/* <div key={car + index}>
-<img src={car.img} alt={car.model} />
-<b>{car.model}</b>
-</div> */}
 
 export default HomePage;

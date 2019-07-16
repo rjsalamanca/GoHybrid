@@ -23,3 +23,15 @@
   width: 80%;
   border: 1px solid blue;
 }
+
+.carModels {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.carCard {
+  flex-basis: 150px;
+  min-width: 100px;
+  margin: 10px;
+}
