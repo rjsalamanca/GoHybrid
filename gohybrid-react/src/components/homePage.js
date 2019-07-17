@@ -165,7 +165,7 @@ class HomePage extends Component {
             <div>
                 <h1>Go Hybrid - Home Page</h1>
                 <Container id="carLookUpContainer" style={makeFlex}>
-                    <div id="sideBar">
+                    <div >
                         <h3>Search:</h3>
                         <Form.Control onChange={(e) => this.handleYear(e)} as="select">
                             <option>Year</option>
