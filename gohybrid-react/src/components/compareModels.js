@@ -7,7 +7,9 @@ class CompareModels extends Component {
     state = {
         redirect: false,
         car1: undefined,
-        car2: undefined
+        car2: undefined,
+        car1Display: '',
+        car2Display: ''
     }
 
     componentDidMount = () => {
@@ -18,15 +20,17 @@ class CompareModels extends Component {
     }
 
     componentDidUpdate = () => {
-
+        if (this.state.car1 !== undefined) {
+            console.log('BRO')
+        }
     }
 
     vehicles = async (carObj) => {
         const { year, make, car } = this.props.location.state;
-        //get the details of vehicle 1
 
+        //get the details of vehicle 1
         const vehicle1Details = await this.getVehicleDetails(carObj.id);
-        let vehicle2Details = 'Not Found'
+        let vehicle2Details = 'No Gas Model'
 
         //get the id of vehicle 2
         const searchVehicle2 = car.model.replace(/Hybrid\s|Hybrid|\sHybrid\s/g, ' ');
@@ -55,10 +59,21 @@ class CompareModels extends Component {
         const { car1, car2 } = this.state;
 
         return (
-            <div>
-                <h1>Comparing: </h1>
+            <>
+                {car1 === undefined ?
+                    <div>
+                        loading
+                    </div>
+                    :
+                    <div>
+                        <h1>Comparing:  {car1.model._text}</h1>
+                        <div>
+
+                        </div>
+                    </div>
+                }
                 {!!this.state.redirect ? <Redirect to="/" /> : ''}
-            </div>
+            </>
         )
     }
 }
