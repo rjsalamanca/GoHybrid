@@ -42,6 +42,17 @@
   width: 80%;
 }
 
+.searchParameters {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.searchParameters p {
+  min-width: 100px;
+  text-align: center;
+}
+
 .carModels {
   display: flex;
   flex-wrap: wrap;
