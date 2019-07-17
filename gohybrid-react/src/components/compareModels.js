@@ -88,6 +88,11 @@ class CompareModels extends Component {
         return (
 
             <Table striped bordered hover size="sm">
+                <thead className="thead-dark">
+                    <tr>
+                        <th scope="col" colSpan="2">{car.model._text}</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr>
                         <td>Fuel Type:</td>
@@ -112,18 +117,18 @@ class CompareModels extends Component {
                     <tr>
                         <td>
                             Amount Spent On Gas Per Year:<br />
-                            <small >Based on the average miles driven per year in America: 13476 Miles</small>
+                            <small style={{ fontSize: '0.5em', lineHeight: '0.7' }}>Based on the average miles driven per year in America: 13476 Miles</small>
                         </td>
                         <td>${car.amountGasPerYear}</td>
                     </tr>
                 </tbody>
-            </Table>
+            </Table >
         )
     }
 
     render() {
         const { car1, car2 } = this.state;
-
+        console.log(this.props)
         return (
             <>
                 {car1 === undefined && car2 === undefined ?
@@ -132,10 +137,11 @@ class CompareModels extends Component {
                     </div>
                     :
                     <div>
-                        <Container style={{ border: '1px solid red' }}>
+                        <Container id='compareModelsContainer' className="shadow-lg rounded">
+                            <h3> {car1.model._text} vs.  {typeof car2 !== 'object' ? car2 : car2.model._text}</h3>
+
                             <Row>
-                                Car Image
-                                <h1> {car1.model._text} vs.  {typeof car2 !== 'object' ? car2 : car2.model._text}</h1>
+                                <img className="compareModelMainImage shadow rounded" src={this.props.location.state.car.img} alt={car1.model._text} />
                             </Row>
                             <Row>
                                 <Col>
@@ -146,12 +152,14 @@ class CompareModels extends Component {
                                 </Col>
                             </Row>
                             <Row>
-                                If you go hybrid you will save ${car2.amountGasPerYear - car1.amountGasPerYear} per year
+                                <p>
+                                    If you go hybrid you will save <b>${car2.amountGasPerYear - car1.amountGasPerYear}</b> per year
+                                </p>
                             </Row>
                         </Container>
                     </div>
                 }
-                {!!this.state.redirect ? <Redirect to="/" /> : ''}
+                {!!this.state.redirect ? <Redirect to="/" /> : ""}
             </>
         )
     }

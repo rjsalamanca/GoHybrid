@@ -35,3 +35,32 @@
   min-width: 100px;
   margin: 10px;
 }
+
+#compareModelsContainer {
+  margin: 20px auto;
+  max-width: 600px;
+  text-align: center;
+  padding: 20px;
+}
+
+.compareModelMainImage {
+  max-width: 450px;
+  margin: 20px auto;
+}
+
+.row {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}

@@ -79,7 +79,11 @@ class App extends Component {
         <Route path='/' exact render={(props) => <HomePage {...props} user={this.state} />} />
         <Route path='/users/:login_or_register?' render={(props) => <UsersPage {...props} user={this.state} changeLoginState={this.changeLoginState} />} />
         <Route path='/compare/:year/:make/:model?' render={(props) => <CompareModels {...props} user={this.state} />} />
-
+        <footer className="footer mt-auto py-3">
+          <div className="container">
+            <span className="text-muted">Place sticky footer content here.</span>
+          </div>
+        </footer>
       </Router >
     );
   }
