@@ -1,3 +1,11 @@
+.navbar {
+  background-color: #012069;
+}
+
+.navLogo {
+  height: 30px;
+}
+
 .usersCard {
   width: 500px;
   margin: 30px auto;
@@ -55,12 +63,15 @@
 
 /* Sticky footer styles
 -------------------------------------------------- */
-
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
   /* Set the fixed height of the footer here */
   height: 60px;
-  background-color: #f5f5f5;
+  background: linear-gradient(#012169, #0f3485);
+}
+
+.footerInfo {
+  text-align: center;
 }

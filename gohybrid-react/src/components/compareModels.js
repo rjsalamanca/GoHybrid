@@ -138,7 +138,7 @@ class CompareModels extends Component {
                     :
                     <div>
                         <Container id='compareModelsContainer' className="shadow-lg rounded">
-                            <h3> {car1.model._text} vs.  {typeof car2 !== 'object' ? car2 : car2.model._text}</h3>
+                            <h3>{this.props.location.state.make} {car1.model._text} vs. {this.props.location.state.make} {typeof car2 !== 'object' ? car2 : car2.model._text}</h3>
 
                             <Row>
                                 <img className="compareModelMainImage shadow rounded" src={this.props.location.state.car.img} alt={car1.model._text} />
