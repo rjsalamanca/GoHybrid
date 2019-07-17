@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Container, Form, Card } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import noImageAvailable from '../placeholderCar.png'
 
 const convert = require('xml-js');
@@ -77,18 +78,16 @@ class HomePage extends Component {
                 dataAsJson = Array.from(dataAsJson);
             }
 
-            const carModels = dataAsJson.map(model => model.value._text);
-            let hybridCars = await carModels.map(async model =>
-                (await this.findHybrids(model) === true) ? model : false
-            );
+            const hybridCars = dataAsJson.map(model => model.value._text).filter(model => !!model.includes('Hybrid'));
 
-            await Promise.all(hybridCars).then((response) => hybridCars = response.filter(e => e !== false));
+            let hybridCarIDs = await hybridCars.map(async model => await this.findHybridId(this.state.year, this.state.make, model))
+            await Promise.all(hybridCarIDs).then(id => hybridCarIDs = id);
 
-            let carModelImages = await hybridCars.map(async model => await this.tryThis(model))
-            await Promise.all(carModelImages).then((cars) => carModelImages = cars);
+            let carModelImages = await hybridCars.map(async model => await this.getModelImagesFromWiki(model))
+            await Promise.all(carModelImages).then(cars => carModelImages = cars);
 
             const modelsAndImages = hybridCars.map((model, index) => {
-                return { model, img: carModelImages[index] }
+                return { id: parseInt(hybridCarIDs[index]), model, img: carModelImages[index] }
             })
 
             this.setState({ getModels: modelsAndImages, showCars: false });
@@ -97,44 +96,20 @@ class HomePage extends Component {
         }
     }
 
-    findHybrids = async (carModel) => {
-        const url = `https://www.fueleconomy.gov/ws/rest/vehicle/menu/options?year=${this.state.year}&make=${this.state.make}&model=${carModel}`;
+    findHybridId = async (year, make, carModel) => {
+        const url = `https://www.fueleconomy.gov/ws/rest/vehicle/menu/options?year=${year}&make=${make}&model=${carModel}`;
 
         try {
             const response = await fetch(url);
             const responseToText = await response.text();
-            let dataAsJson = JSON.parse(convert.xml2json(responseToText, { compact: true, spaces: 4 })).menuItems.menuItem;
-            let carID = dataAsJson.value._text;
-            //console.log(dataAsJson.value._text)
-            //    (typeof dataAsJson === 'array') ? carID = dataAsJson[0].value._text : carID = dataAsJson.value._text;
-
-            const carDetailsURL = `https://www.fueleconomy.gov/ws/rest/vehicle/${carID}`;
-
-            try {
-                const responseDetails = await fetch(carDetailsURL);
-                const responseDetailsToText = await responseDetails.text();
-                let responseDetailsdataAsJson = JSON.parse(convert.xml2json(responseDetailsToText, { compact: true, spaces: 4 })).vehicle;
-                return (responseDetailsdataAsJson.atvType._text === 'Hybrid') ? true : false;
-            } catch (err) {
-                return err.message;
-            }
+            const dataAsJson = JSON.parse(convert.xml2json(responseToText, { compact: true, spaces: 4 })).menuItems.menuItem;
+            return parseInt(dataAsJson.value._text);
         } catch (err) {
             return err.message;
         }
     }
 
-    getModelImages = async (carModel) => {
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=${this.state.year + ' ' + this.state.make + ' ' + carModel}&key=AIzaSyB9WzlCfQKAWzLTqAsrcepelEEUT4b8NPk`;
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            return data.items[0].snippet.thumbnails.medium.url;
-        } catch (err) {
-            return err;
-        }
-    }
-
-    tryThis = async (carModel) => {
+    getModelImagesFromWiki = async (carModel) => {
         const searchMakeAndModel = (this.state.make + "_" + carModel).split(' ').join('_');
         let wikiURL = `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&origin=%2A&titles=${searchMakeAndModel}&pithumbsize=250&format=json`;
 
@@ -143,12 +118,23 @@ class HomePage extends Component {
             const data = await response.json();
             return data.query.pages[Object.keys(data.query.pages)].thumbnail.source;
         } catch (err) {
-            const getImageFromYoutube = await this.getModelImages(carModel);
+            const getImageFromYoutube = await this.getModelImagesFromYoutube(carModel);
 
             if (typeof getImageFromYoutube === 'object') {
                 return noImageAvailable
             }
             return getImageFromYoutube;
+        }
+    }
+
+    getModelImagesFromYoutube = async (carModel) => {
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=${this.state.year + ' ' + this.state.make + ' ' + carModel}&key=AIzaSyB9WzlCfQKAWzLTqAsrcepelEEUT4b8NPk`;
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            return data.items[0].snippet.thumbnails.medium.url;
+        } catch (err) {
+            return err;
         }
     }
 
@@ -174,6 +160,7 @@ class HomePage extends Component {
 
     render() {
         const { getYears, getMakes, getModels, make, model, year, showCurrentSelection } = this.state;
+        const findID = this.findHybridId;
         return (
             <div>
                 <h1>Go Hybrid - Home Page</h1>
@@ -219,12 +206,24 @@ class HomePage extends Component {
                         </div>
                         <div className="carModels">
                             {showCurrentSelection.map((car, index) =>
-                                <Card className='carCard' key={car + index} style={{ width: '18rem' }}>
-                                    <Card.Img variant="top" src={car.img} alt={car.model} />
-                                    <Card.Body>
-                                        <Card.Title>{car.model}</Card.Title>
-                                    </Card.Body>
-                                </Card>
+                                <Link
+                                    to={{
+                                        pathname: `/compare/${year}/${make}/${!!car.model.includes(' ') ? car.model.split(' ').join('_') : car.model}`,
+                                        state: {
+                                            year,
+                                            make,
+                                            car
+                                        },
+                                        findID
+                                    }}
+                                    className='carCard' key={car + index}>
+                                    <Card>
+                                        <Card.Img variant="top" src={car.img} alt={car.model} />
+                                        <Card.Body>
+                                            <Card.Title>{car.model}</Card.Title>
+                                        </Card.Body>
+                                    </Card>
+                                </Link>
                             )}
                         </div>
                     </div>

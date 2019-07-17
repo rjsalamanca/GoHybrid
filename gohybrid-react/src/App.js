@@ -4,6 +4,7 @@ import { Nav, Button } from 'react-bootstrap';
 
 import HomePage from './components/homePage';
 import UsersPage from './components/usersPage';
+import CompareModels from './components/compareModels';
 
 import './App.css';
 
@@ -77,6 +78,8 @@ class App extends Component {
         </Nav>
         <Route path='/' exact render={(props) => <HomePage {...props} user={this.state} />} />
         <Route path='/users/:login_or_register?' render={(props) => <UsersPage {...props} user={this.state} changeLoginState={this.changeLoginState} />} />
+        <Route path='/compare/:year/:make/:model?' render={(props) => <CompareModels {...props} user={this.state} />} />
+
       </Router >
     );
   }
