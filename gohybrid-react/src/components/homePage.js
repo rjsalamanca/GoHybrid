@@ -18,7 +18,8 @@ class HomePage extends Component {
         make: '',
         model: '',
         showCurrentSelection: [],
-        showCars: false
+        showCars: false,
+        loading: false
     }
 
     componentDidMount = () => {
@@ -70,6 +71,7 @@ class HomePage extends Component {
         const url = `https://www.fueleconomy.gov/ws/rest/vehicle/menu/model?year=${this.state.year}&make=${this.state.make}`;
 
         try {
+            this.setState({ loading: true })
             const response = await fetch(url)
             const responseToText = await response.text();
             let dataAsJson = JSON.parse(convert.xml2json(responseToText, { compact: true, spaces: 4 })).menuItems.menuItem;
@@ -90,7 +92,11 @@ class HomePage extends Component {
                 return { id: parseInt(hybridCarIDs[index]), model, img: carModelImages[index] }
             })
 
-            this.setState({ getModels: modelsAndImages, showCars: false });
+            this.setState({
+                getModels: modelsAndImages,
+                showCars: false,
+                loading: false
+            });
         } catch (err) {
             console.log(err.message)
         }
@@ -164,8 +170,8 @@ class HomePage extends Component {
         return (
             <div>
                 <h1>Go Hybrid - Home Page</h1>
-                <Container id="carLookUpContainer" style={makeFlex}>
-                    <div >
+                <Container role="main" id="carLookUpContainer" style={makeFlex} className="shadow rounded">
+                    <div id="searchContainer">
                         <h3>Search:</h3>
                         <Form.Control onChange={(e) => this.handleYear(e)} as="select">
                             <option>Year</option>
@@ -184,7 +190,7 @@ class HomePage extends Component {
                                     <option key={`manufacturer-${singleMake}`}>{singleMake}</option>
                                 )
                                 :
-                                <option disabled>Choose a Year First...</option>
+                                <option disabled>Select a Year First...</option>
                             }
                         </Form.Control>
                         <Form.Control onChange={(e) => this.handleModel(e)} as="select">
@@ -204,28 +210,32 @@ class HomePage extends Component {
                             <p>Make: {make}</p>
                             <p>Model: {model}</p>
                         </div>
-                        <div className="carModels">
-                            {showCurrentSelection.map((car, index) =>
-                                <Link
-                                    to={{
-                                        pathname: `/compare/${year}/${make}/${!!car.model.includes(' ') ? car.model.split(' ').join('_') : car.model}`,
-                                        state: {
-                                            year,
-                                            make,
-                                            car
-                                        },
-                                        findID
-                                    }}
-                                    className='carCard' key={car + index}>
-                                    <Card>
-                                        <Card.Img variant="top" src={car.img} alt={car.model} />
-                                        <Card.Body>
-                                            <Card.Title>{car.model}</Card.Title>
-                                        </Card.Body>
-                                    </Card>
-                                </Link>
-                            )}
-                        </div>
+                        {!!this.state.loading ?
+                            <img src="https://cdn.dribbble.com/users/778626/screenshots/4339853/car-middle.gif" alt="loading" />
+                            :
+                            <div className="carModels">
+                                {showCurrentSelection.map((car, index) =>
+                                    <Link
+                                        to={{
+                                            pathname: `/compare/${year}/${make}/${!!car.model.includes(' ') ? car.model.split(' ').join('_') : car.model}`,
+                                            state: {
+                                                year,
+                                                make,
+                                                car
+                                            },
+                                            findID
+                                        }}
+                                        className='carCard' key={car + index}>
+                                        <Card>
+                                            <Card.Img variant="top" src={car.img} alt={car.model} />
+                                            <Card.Body>
+                                                <Card.Title>{car.model}</Card.Title>
+                                            </Card.Body>
+                                        </Card>
+                                    </Link>
+                                )}
+                            </div>
+                        }
                     </div>
                 </Container>
             </div >

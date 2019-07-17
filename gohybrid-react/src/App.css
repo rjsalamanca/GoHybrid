@@ -18,8 +18,19 @@
 #carLookUpContainer {
   margin: 0;
   padding: 0;
-  width: 100%;
-  max-width: 100%;
+  /* width: 100%;
+  max-width: 100%; */
+  margin: 0px auto 100px;
+  height: 100%;
+  padding: 20px 5px;
+}
+
+#searchContainer {
+  margin: 0 10px;
+}
+
+#searchContainer .form-control {
+  margin: 15px 0;
 }
 
 #sideBar {
@@ -29,7 +40,6 @@
 
 #mainContainer {
   width: 80%;
-  border: 1px solid blue;
 }
 
 .carModels {
@@ -44,8 +54,12 @@
   margin: 10px;
 }
 
+.carCard .card {
+  height: 100%;
+}
+
 #compareModelsContainer {
-  margin: 20px auto;
+  margin: 20px auto 80px;
   max-width: 600px;
   text-align: center;
   padding: 20px;
@@ -63,6 +77,14 @@
 
 /* Sticky footer styles
 -------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px; /* Margin bottom by footer height */
+}
 .footer {
   position: absolute;
   bottom: 0;
