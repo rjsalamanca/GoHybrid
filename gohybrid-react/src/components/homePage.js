@@ -211,7 +211,9 @@ class HomePage extends Component {
                             <p>Model: {model}</p>
                         </div>
                         {!!this.state.loading ?
-                            <img src="https://cdn.dribbble.com/users/778626/screenshots/4339853/car-middle.gif" alt="loading" />
+                            <div style={{ width: '100%', textAlign: 'center' }} >
+                                <img src="https://cdn.dribbble.com/users/778626/screenshots/4339853/car-middle.gif" alt="loading" />
+                            </div>
                             :
                             <div className="carModels">
                                 {showCurrentSelection.map((car, index) =>

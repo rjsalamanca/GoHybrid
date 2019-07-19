@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import { Container, Row, Col, Table, Button } from 'react-bootstrap';
 
-import { Container, Row, Col, Table } from 'react-bootstrap';
+import CenteredParagraph from '../sharedComponents/centeredParagraph';
 
 const convert = require('xml-js');
+
 
 class CompareModels extends Component {
     state = {
@@ -126,6 +128,32 @@ class CompareModels extends Component {
         )
     }
 
+    saveComparison = async () => {
+        const encodeThis = document.getElementById('comparison').innerHTML.toString();
+        const encodeHTML = encodeURI(encodeThis);
+
+        const url = "http://localhost:3000/compare/";
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    user_id: this.props.user.id,
+                    html: encodeHTML,
+                })
+            })
+
+            const data = await response.json();
+            console.log(data)
+        } catch (err) {
+            console.log("Couldn't add comparison to the database")
+        }
+    }
+
     render() {
         const { car1, car2 } = this.state;
         console.log(this.props)
@@ -136,7 +164,7 @@ class CompareModels extends Component {
                         loading
                     </div>
                     :
-                    <div>
+                    <div id="comparison">
                         <Container id='compareModelsContainer' className="shadow-lg rounded">
                             <h3>{this.props.location.state.make} {car1.model._text} vs. {this.props.location.state.make} {typeof car2 !== 'object' ? car2 : car2.model._text}</h3>
 
@@ -151,10 +179,20 @@ class CompareModels extends Component {
                                     {this.displayCarDetails(car2)}
                                 </Col>
                             </Row>
-                            <Row>
-                                <p>
-                                    If you go hybrid you will save <b>${car2.amountGasPerYear - car1.amountGasPerYear}</b> per year
-                                </p>
+                            <Row style={{ width: "100%" }}>
+                                <CenteredParagraph style={{ textAlign: "center", width: "100%" }}>
+                                    If you go hybrid you will save <b className="text-success h5" >${car2.amountGasPerYear - car1.amountGasPerYear}</b> per year
+                                </CenteredParagraph>
+                                {!!this.props.user.isLoggedIn ?
+                                    <CenteredParagraph>
+                                        <Button onClick={() => this.saveComparison()} variant={'primary'}> Save Comparison </Button>
+                                    </CenteredParagraph>
+                                    :
+                                    <CenteredParagraph>
+                                        <Button className="btn-secondary disabled" aria-disabled="true" disabled> Save Comparison </Button><br />
+                                        <small><i>Login to be able to save this comparison</i></small>
+                                    </CenteredParagraph>
+                                }
                             </Row>
                         </Container>
                     </div>

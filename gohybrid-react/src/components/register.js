@@ -49,7 +49,7 @@ class Register extends Component {
         const { createdAccount, errorCode } = this.state;
         return (
             <Card className="usersCard" >
-                <Card.Header> Register</Card.Header>
+                <Card.Header as="h5"> Register</Card.Header>
                 <Card.Body>
                     <Form>
                         <Form.Group controlId="formFirstName">
@@ -69,7 +69,7 @@ class Register extends Component {
                             <Form.Label>Password</Form.Label>
                             <Form.Control type="password" autoComplete='on' name="password" className="form-control" placeholder="Password" onChange={(e) => this.handlePassword(e)} />
                         </Form.Group>
-                        <Button variant={'danger'} onClick={() => this.createUser()}>Submit</Button>
+                        <Button variant={'primary'} onClick={() => this.createUser()}>Submit</Button>
                     </Form>
                     {errorCode === 3 ?
                         <Alert className="alert alert-dismissible alert-danger users-alert">

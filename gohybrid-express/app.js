@@ -6,7 +6,8 @@ const express = require('express'),
 
 
 const indexRouter = require('./routes/index'),
-    usersRouter = require('./routes/users');
+    usersRouter = require('./routes/users'),
+    compareRouter = require('./routes/compare');
 
 const app = express();
 const corsOptions = {
@@ -27,5 +28,6 @@ app.use(cors(corsOptions));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/compare', compareRouter);
 
 module.exports = app;
