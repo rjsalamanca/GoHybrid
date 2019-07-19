@@ -93,7 +93,7 @@ class Login extends Component {
                         No Account? <Link to="/users/register">Register</Link>
                     </p>
                 </Card.Body>
-                {(!!login) ? <Redirect to="/" /> : ""}
+                {(!!login) ? <Redirect to="/users" /> : ""}
             </Card>
         )
     }

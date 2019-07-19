@@ -3,6 +3,7 @@ import { Redirect } from "react-router-dom";
 
 import Login from "./login";
 import Register from "./register";
+import Users from './users';
 
 class UsersPage extends Component {
 
@@ -34,14 +35,17 @@ class UsersPage extends Component {
         const { changeLoginState } = this.props;
 
         return (
-            (login_or_register === "login") ?
-                <Login {...this.props} changeLoginState={changeLoginState} />
+            (login_or_register === undefined) ?
+                <Users {...this.props} />
                 :
-                (login_or_register === "register") ?
-                    <Register />
-                    : (login_or_register === "logout") ?
-                        (!!this.props.user.isLoggedIn ? '' : this.notLoggedInToLogout())
-                        : <Redirect to="/" />
+                (login_or_register === "login") ?
+                    <Login {...this.props} changeLoginState={changeLoginState} />
+                    :
+                    (login_or_register === "register") ?
+                        <Register />
+                        : (login_or_register === "logout") ?
+                            (!!this.props.user.isLoggedIn ? '' : this.notLoggedInToLogout())
+                            : <Redirect to="/" />
         )
     }
 }

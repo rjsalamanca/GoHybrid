@@ -2,9 +2,17 @@ const express = require("express"),
   router = express.Router(),
   bcrypt = require('bcryptjs'),
   SALT_ROUNDS = 10,
-  UsersModel = require("../models/users");
+  UsersModel = require("../models/users"),
+  ComparisonsModel = require("../models/compare");
 
-/* GET users listing. */
+router.post("/", async (req, res, next) => {
+  const { user_id } = req.body;
+  console.log(req.body)
+  const comparisons = await ComparisonsModel.getAllComparisons(parseInt(user_id));
+
+  comparisons.length !== 0 ? res.json(comparisons) : res.json({ comparisons: [] })
+})
+
 router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
   const checkEmail = await UsersModel.checkUser(email);

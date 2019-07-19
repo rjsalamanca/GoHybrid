@@ -158,14 +158,14 @@ class HomePage extends Component {
         }
     }
 
-    handleModel = (e) => {
-        if (e.target.value !== 'Model') {
-            this.setState({ model: e.target.value })
-        }
-    }
+    // handleModel = (e) => {
+    //     if (e.target.value !== 'Model') {
+    //         this.setState({ model: e.target.value })
+    //     }
+    // }
 
     render() {
-        const { getYears, getMakes, getModels, make, model, year, showCurrentSelection } = this.state;
+        const { getYears, getMakes, make, model, year, showCurrentSelection } = this.state;
         const findID = this.findHybridId;
         return (
             <div>
@@ -193,7 +193,7 @@ class HomePage extends Component {
                                 <option disabled>Select a Year First...</option>
                             }
                         </Form.Control>
-                        <Form.Control onChange={(e) => this.handleModel(e)} as="select">
+                        {/* <Form.Control onChange={(e) => this.handleModel(e)} as="select">
                             <option>Model</option>
                             {getModels.length !== 0 ?
                                 getModels.map(singleModel =>
@@ -202,7 +202,7 @@ class HomePage extends Component {
                                 :
                                 <option disabled>Choose a Year First...</option>
                             }
-                        </Form.Control>
+                        </Form.Control> */}
                     </div>
                     <div id="mainContainer">
                         <div className="searchParameters">

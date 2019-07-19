@@ -10,6 +10,7 @@ const convert = require('xml-js');
 class CompareModels extends Component {
     state = {
         redirect: false,
+        redirectToUsers: false,
         car1: undefined,
         car2: undefined,
         car1Display: '',
@@ -149,6 +150,7 @@ class CompareModels extends Component {
 
             const data = await response.json();
             console.log(data)
+            this.setState({ redirectToUsers: data.addedCompare })
         } catch (err) {
             console.log("Couldn't add comparison to the database")
         }
@@ -184,7 +186,7 @@ class CompareModels extends Component {
                                     If you go hybrid you will save <b className="text-success h5" >${car2.amountGasPerYear - car1.amountGasPerYear}</b> per year
                                 </CenteredParagraph>
                                 {!!this.props.user.isLoggedIn ?
-                                    <CenteredParagraph>
+                                    <CenteredParagraph className="comparisonButton">
                                         <Button onClick={() => this.saveComparison()} variant={'primary'}> Save Comparison </Button>
                                     </CenteredParagraph>
                                     :
@@ -197,6 +199,7 @@ class CompareModels extends Component {
                         </Container>
                     </div>
                 }
+                {!!this.state.redirectToUsers ? <Redirect to="/users" /> : ""}
                 {!!this.state.redirect ? <Redirect to="/" /> : ""}
             </>
         )
