@@ -30,9 +30,9 @@ class Users extends Component {
             })
 
             const data = await response.json();
-
-            if (data.length !== 0) {
-                this.setState({ comparisons: data })
+            console.log(data)
+            if (data.compares.length !== 0) {
+                this.setState({ comparisons: data.compares })
             }
         } catch (err) {
             // This error code tells us that the url is bad.
@@ -80,7 +80,7 @@ class Users extends Component {
 
     render() {
         const { user } = this.props;
-
+        console.log(this.state)
         return (
             <div style={{ height: '100%' }}>
                 {typeof this.state.comparisons === 'object' && this.state.comparisons.length !== 0 ?

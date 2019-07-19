@@ -10,7 +10,7 @@ router.post("/", async (req, res, next) => {
   console.log(req.body)
   const comparisons = await ComparisonsModel.getAllComparisons(parseInt(user_id));
 
-  comparisons.length !== 0 ? res.json(comparisons) : res.json({ comparisons: [] })
+  comparisons.length !== 0 ? res.json({ compares: comparisons }) : res.json({ compares: comparisons })
 })
 
 router.post("/login", async (req, res, next) => {

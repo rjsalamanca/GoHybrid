@@ -47,23 +47,15 @@ class App extends Component {
               <Nav.Item className="nav-item active ">
                 <Link className="nav-link text-white" to="/">Home<span className="sr-only"></span></Link>
               </Nav.Item>
-              <Nav.Item className="nav-item">
-                <Link className="nav-link text-white" to="/page2">Page2</Link>
-              </Nav.Item>
-              <Nav.Item className="nav-item">
-                <Link className="nav-link text-white" to="/page3">Page3</Link>
-              </Nav.Item>
-              {isLoggedIn === true ?
-                <Nav.Item className="nav-item">
-                  <Link className="nav-link text-white" to="/users">Profile</Link>
-                </Nav.Item>
-                : ''}
             </Nav>
           </div>
 
           <div className="navbar-collapse collapse" id="navbarColor03" >
             {isLoggedIn === true ?
               <Nav className="navbar-nav ml-auto">
+                <Nav.Item className="nav-item">
+                  <Link className="nav-link text-white" to="/users">Your Comparisons</Link>
+                </Nav.Item>
                 <Nav.Item className="nav-item">
                   <Link className="nav-link text-white" to="/users/logout">Logout</Link>
                 </Nav.Item>

@@ -26,17 +26,9 @@ class HomePage extends Component {
         this.loadYears();
     }
 
-    componentDidUpdate = () => {
-        if (this.state.model === '' && this.state.showCars === false && this.state.getModels.length !== 0) {
-            this.setState({
-                showCurrentSelection: this.state.getModels,
-                showCars: true
-            })
-        } else if (this.state.model !== '' && this.state.showCars === false) {
-            this.setState({
-                showCurrentSelection: this.state.getModels,
-                showCars: true
-            })
+    componentDidUpdate = (prevProps, prevState) => {
+        if (this.state.make !== '' && (prevState.year !== this.state.year)) {
+            this.loadModels();
         }
     }
 
@@ -82,21 +74,30 @@ class HomePage extends Component {
 
             const hybridCars = dataAsJson.map(model => model.value._text).filter(model => !!model.includes('Hybrid'));
 
-            let hybridCarIDs = await hybridCars.map(async model => await this.findHybridId(this.state.year, this.state.make, model))
-            await Promise.all(hybridCarIDs).then(id => hybridCarIDs = id);
+            if (hybridCars.length !== 0) {
 
-            let carModelImages = await hybridCars.map(async model => await this.getModelImagesFromWiki(model))
-            await Promise.all(carModelImages).then(cars => carModelImages = cars);
+                let hybridCarIDs = await hybridCars.map(async model => await this.findHybridId(this.state.year, this.state.make, model))
+                await Promise.all(hybridCarIDs).then(id => hybridCarIDs = id);
 
-            const modelsAndImages = hybridCars.map((model, index) => {
-                return { id: parseInt(hybridCarIDs[index]), model, img: carModelImages[index] }
-            })
+                let carModelImages = await hybridCars.map(async model => await this.getModelImagesFromWiki(model))
+                await Promise.all(carModelImages).then(cars => carModelImages = cars);
 
-            this.setState({
-                getModels: modelsAndImages,
-                showCars: false,
-                loading: false
-            });
+                const modelsAndImages = hybridCars.map((model, index) => {
+                    return { id: parseInt(hybridCarIDs[index]), model, img: carModelImages[index] }
+                })
+
+                this.setState({
+                    getModels: modelsAndImages,
+                    showCars: false,
+                    loading: false
+                });
+            } else {
+                this.setState({
+                    getModels: [],
+                    showCars: false,
+                    loading: false
+                })
+            }
         } catch (err) {
             console.log(err.message)
         }
@@ -165,7 +166,7 @@ class HomePage extends Component {
     // }
 
     render() {
-        const { getYears, getMakes, make, model, year, showCurrentSelection } = this.state;
+        const { getYears, getMakes, make, year, getModels } = this.state;
         const findID = this.findHybridId;
         return (
             <div>
@@ -174,7 +175,7 @@ class HomePage extends Component {
                     <div id="searchContainer">
                         <h3>Search:</h3>
                         <Form.Control onChange={(e) => this.handleYear(e)} as="select">
-                            <option>Year</option>
+                            <option>Select A Year</option>
                             {getYears.length !== 0 ?
                                 getYears.map(singleYear =>
                                     <option key={`year-lookup-${singleYear}`}>{singleYear}</option>
@@ -184,7 +185,7 @@ class HomePage extends Component {
                             }
                         </Form.Control>
                         <Form.Control onChange={(e) => this.handleMake(e)} as="select">
-                            <option>Make</option>
+                            <option>Select a Make</option>
                             {getMakes.length !== 0 ?
                                 getMakes.map(singleMake =>
                                     <option key={`manufacturer-${singleMake}`}>{singleMake}</option>
@@ -208,35 +209,45 @@ class HomePage extends Component {
                         <div className="searchParameters">
                             <p>Year: {year}</p>
                             <p>Make: {make}</p>
-                            <p>Model: {model}</p>
                         </div>
                         {!!this.state.loading ?
                             <div style={{ width: '100%', textAlign: 'center' }} >
                                 <img src="https://cdn.dribbble.com/users/778626/screenshots/4339853/car-middle.gif" alt="loading" />
                             </div>
                             :
-                            <div className="carModels">
-                                {showCurrentSelection.map((car, index) =>
-                                    <Link
-                                        to={{
-                                            pathname: `/compare/${year}/${make}/${!!car.model.includes(' ') ? car.model.split(' ').join('_') : car.model}`,
-                                            state: {
-                                                year,
-                                                make,
-                                                car
-                                            },
-                                            findID
-                                        }}
-                                        className='carCard' key={car + index}>
-                                        <Card>
-                                            <Card.Img variant="top" src={car.img} alt={car.model} />
-                                            <Card.Body>
-                                                <Card.Title>{car.model}</Card.Title>
-                                            </Card.Body>
-                                        </Card>
-                                    </Link>
-                                )}
-                            </div>
+                            getModels.length !== 0 ?
+                                <div className="carModels">
+                                    {getModels.map((car, index) =>
+                                        <Link
+                                            to={{
+                                                pathname: `/compare/${year}/${make}/${!!car.model.includes(' ') ? car.model.split(' ').join('_') : car.model}`,
+                                                state: {
+                                                    year,
+                                                    make,
+                                                    car
+                                                },
+                                                findID
+                                            }}
+                                            className='carCard' key={car + index}>
+                                            <Card>
+                                                <Card.Img variant="top" src={car.img} alt={car.model} />
+                                                <Card.Body>
+                                                    <Card.Title>{car.model}</Card.Title>
+                                                </Card.Body>
+                                            </Card>
+                                        </Link>
+                                    )}
+                                </div>
+                                :
+                                make.length === 0 ?
+                                    <div className="carModels text-muted">
+                                        <b>Please make sure to select a year and Model</b>
+                                    </div>
+                                    :
+                                    <div className="text-muted" style={{ textAlign: 'center' }}>
+                                        <p><b>No Hybrids Found, search a different year or make</b></p>
+                                        <img className="shadow" style={{ width: "200px", borderRadius: "20px", margin: "20px 0" }} src="https://cdn.dribbble.com/users/1161168/screenshots/5665541/animation-car.gif" alt="Car" />
+                                    </div>
                         }
                     </div>
                 </Container>
