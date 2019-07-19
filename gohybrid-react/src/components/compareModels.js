@@ -183,7 +183,7 @@ class CompareModels extends Component {
                             </Row>
                             <Row style={{ width: "100%" }}>
                                 <CenteredParagraph style={{ textAlign: "center", width: "100%" }}>
-                                    If you go hybrid you will save <b className="text-success h5" >${car2.amountGasPerYear - car1.amountGasPerYear}</b> per year
+                                    If you go hybrid you will save <b className="text-success h5" >${(car2.amountGasPerYear - car1.amountGasPerYear).toFixed(2)}</b> per year
                                 </CenteredParagraph>
                                 {!!this.props.user.isLoggedIn ?
                                     <CenteredParagraph className="comparisonButton">

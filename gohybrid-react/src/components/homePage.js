@@ -170,7 +170,7 @@ class HomePage extends Component {
         const findID = this.findHybridId;
         return (
             <div>
-                <h1>Go Hybrid - Home Page</h1>
+                {/* <h1>Go Hybrid - Home Page</h1> */}
                 <Container role="main" id="carLookUpContainer" style={makeFlex} className="shadow rounded">
                     <div id="searchContainer">
                         <h3>Search:</h3>

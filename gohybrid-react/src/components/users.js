@@ -80,7 +80,6 @@ class Users extends Component {
 
     render() {
         const { user } = this.props;
-        console.log(this.state)
         return (
             <div style={{ height: '100%' }}>
                 {typeof this.state.comparisons === 'object' && this.state.comparisons.length !== 0 ?

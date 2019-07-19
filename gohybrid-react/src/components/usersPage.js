@@ -44,7 +44,7 @@ class UsersPage extends Component {
                     (login_or_register === "register") ?
                         <Register />
                         : (login_or_register === "logout") ?
-                            (!!this.props.user.isLoggedIn ? '' : this.notLoggedInToLogout())
+                            (!!this.props.user.isLoggedIn ? this.loggedInToLogout() : this.notLoggedInToLogout())
                             : <Redirect to="/" />
         )
     }
