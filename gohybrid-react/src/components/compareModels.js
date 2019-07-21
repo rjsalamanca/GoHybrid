@@ -87,46 +87,52 @@ class CompareModels extends Component {
     }
 
     displayCarDetails = (car) => {
-
-        return (
-
-            <Table striped bordered hover size="sm">
-                <thead className="thead-dark">
-                    <tr>
-                        <th scope="col" colSpan="2">{car.model._text}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Fuel Type:</td>
-                        <td>{car.fuelType._text}</td>
-                    </tr>
-                    <tr>
-                        <td>Fuel Efficency Score:</td>
-                        <td>{car.feScore._text}</td>
-                    </tr>
-                    <tr>
-                        <td>City MPG: UCity:</td>
-                        <td>{car.city08._text}</td>
-                    </tr>
-                    <tr>
-                        <td>Highway MPG:</td>
-                        <td>{car.highway08._text}</td>
-                    </tr>
-                    <tr>
-                        <td>Combined MPG:</td>
-                        <td>{car.combinedMpg}</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            Amount Spent On Gas Per Year:<br />
-                            <small style={{ fontSize: '0.5em', lineHeight: '0.7' }}>Based on the average miles driven per year in America: 13476 Miles</small>
-                        </td>
-                        <td>${car.amountGasPerYear}</td>
-                    </tr>
-                </tbody>
-            </Table >
-        )
+        if (typeof car === 'object') {
+            return (
+                <Table striped bordered hover size="sm">
+                    <thead className="thead-dark">
+                        <tr>
+                            <th scope="col" colSpan="2">{car.model._text}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Fuel Type:</td>
+                            <td>{car.fuelType._text}</td>
+                        </tr>
+                        <tr>
+                            <td>Fuel Efficency Score:</td>
+                            <td>{car.feScore._text}</td>
+                        </tr>
+                        <tr>
+                            <td>City MPG: UCity:</td>
+                            <td>{car.city08._text}</td>
+                        </tr>
+                        <tr>
+                            <td>Highway MPG:</td>
+                            <td>{car.highway08._text}</td>
+                        </tr>
+                        <tr>
+                            <td>Combined MPG:</td>
+                            <td>{car.combinedMpg}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Amount Spent On Gas Per Year:<br />
+                                <small style={{ fontSize: '0.5em', lineHeight: '0.7' }}>Based on the average miles driven per year in America: 13476 Miles</small>
+                            </td>
+                            <td>${car.amountGasPerYear}</td>
+                        </tr>
+                    </tbody>
+                </Table >
+            )
+        } else {
+            return (
+                <div>
+                    {car}
+                </div>
+            )
+        }
     }
 
     saveComparison = async () => {
@@ -158,12 +164,11 @@ class CompareModels extends Component {
 
     render() {
         const { car1, car2 } = this.state;
-        console.log(this.props)
         return (
             <>
                 {car1 === undefined && car2 === undefined ?
-                    <div>
-                        loading
+                    <div style={{ width: '100%', textAlign: 'center' }} >
+                        <img src="https://cdn.dribbble.com/users/778626/screenshots/4339853/car-middle.gif" alt="loading" />
                     </div>
                     :
                     <div id="comparison">
@@ -183,7 +188,7 @@ class CompareModels extends Component {
                             </Row>
                             <Row style={{ width: "100%" }}>
                                 <CenteredParagraph style={{ textAlign: "center", width: "100%" }}>
-                                    If you go hybrid you will save <b className="text-success h5" >${(car2.amountGasPerYear - car1.amountGasPerYear).toFixed(2)}</b> per year
+                                    If you go hybrid you will save <b className="text-success h5" >{(typeof car2) === 'string' ? 'N/A' : `$ ${(car2.amountGasPerYear - car1.amountGasPerYear).toFixed(2)}`}</b> per year
                                 </CenteredParagraph>
                                 {!!this.props.user.isLoggedIn ?
                                     <CenteredParagraph className="comparisonButton">
