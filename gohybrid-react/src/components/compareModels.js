@@ -58,7 +58,7 @@ class CompareModels extends Component {
         //get the details of vehicle 1
         const vehicle1Details = await this.getVehicleDetails(carObj.id);
         vehicle1Details['combinedMpg'] = (parseInt(vehicle1Details.city08._text) + parseInt(vehicle1Details.highway08._text)) / 2;
-        vehicle1Details['amountGasPerYear'] = ((13476 / vehicle1Details.combinedMpg) * this.state.fuelPrices[vehicle1Details.fuelType._text.toLowerCase()]._text).toFixed(2);
+        vehicle1Details['amountGasPerYear'] = ((13476 / vehicle1Details.combinedMpg) * this.state.fuelPrices[vehicle1Details.fuelType._text.split(' ')[0].toLowerCase()]._text).toFixed(2);
 
         let vehicle2Details = 'No Gas Model Available'
 
