@@ -24,6 +24,7 @@ class CompareModels extends Component {
             this.setState({ redirect: true })
         } else {
             this.getGasPrices();
+            console.log(this.props.location.state)
             this.vehicles(this.props.location.state.car)
         }
     }
@@ -76,6 +77,7 @@ class CompareModels extends Component {
 
     getVehicleDetails = async (carID) => {
         const url = `https://www.fueleconomy.gov/ws/rest/vehicle/${carID}`;
+
         try {
             const response = await fetch(url)
             const responseToText = await response.text();

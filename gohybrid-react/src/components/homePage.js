@@ -75,7 +75,6 @@ class HomePage extends Component {
             const hybridCars = dataAsJson.map(model => model.value._text).filter(model => !!model.includes('Hybrid'));
 
             if (hybridCars.length !== 0) {
-
                 let hybridCarIDs = await hybridCars.map(async model => await this.findHybridId(this.state.year, this.state.make, model))
                 await Promise.all(hybridCarIDs).then(id => hybridCarIDs = id);
 
@@ -110,7 +109,12 @@ class HomePage extends Component {
             const response = await fetch(url);
             const responseToText = await response.text();
             const dataAsJson = JSON.parse(convert.xml2json(responseToText, { compact: true, spaces: 4 })).menuItems.menuItem;
-            return parseInt(dataAsJson.value._text);
+
+            if (dataAsJson[0] !== undefined) {
+                return parseInt(dataAsJson[0].value._text)
+            } else {
+                return parseInt(dataAsJson.value._text);
+            }
         } catch (err) {
             return err.message;
         }
@@ -159,18 +163,12 @@ class HomePage extends Component {
         }
     }
 
-    // handleModel = (e) => {
-    //     if (e.target.value !== 'Model') {
-    //         this.setState({ model: e.target.value })
-    //     }
-    // }
-
     render() {
         const { getYears, getMakes, make, year, getModels } = this.state;
         const findID = this.findHybridId;
+        console.log(getModels)
         return (
             <div>
-                {/* <h1>Go Hybrid - Home Page</h1> */}
                 <Container role="main" id="carLookUpContainer" style={makeFlex} className="shadow rounded">
                     <div id="searchContainer">
                         <h3>Search:</h3>
@@ -194,16 +192,6 @@ class HomePage extends Component {
                                 <option disabled>Select a Year First...</option>
                             }
                         </Form.Control>
-                        {/* <Form.Control onChange={(e) => this.handleModel(e)} as="select">
-                            <option>Model</option>
-                            {getModels.length !== 0 ?
-                                getModels.map(singleModel =>
-                                    <option key={`${make}-${singleModel.model}`}>{singleModel.model}</option>
-                                )
-                                :
-                                <option disabled>Choose a Year First...</option>
-                            }
-                        </Form.Control> */}
                     </div>
                     <div id="mainContainer">
                         <div className="searchParameters">
